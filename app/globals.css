@@ -86,3 +86,86 @@
     white-space: nowrap;
   }
 }
+/* ===== FINAL MOBILE HEADER ALIGNMENT ===== */
+
+@media (max-width: 750px) {
+
+  html,
+  body {
+    width: 100%;
+    max-width: 100%;
+    overflow-x: hidden;
+  }
+
+  header {
+    width: 100%;
+    padding: 10px 28px;
+    box-sizing: border-box;
+  }
+
+  /* Header action row */
+  .actions {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 10px;
+    width: 100%;
+    min-width: 0;
+    height: 48px;
+  }
+
+  /* Notification + Owner buttons */
+  .actions .iconbtn,
+  .actions .iconbtn[title="Account"] {
+    display: flex !important;
+    align-items: center;
+    justify-content: center;
+    flex: 0 0 48px;
+    width: 48px;
+    height: 48px;
+    min-width: 48px;
+    min-height: 48px;
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+    visibility: visible !important;
+    opacity: 1 !important;
+  }
+
+  /* Notification wrapper */
+  .notifyWrap {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex: 0 0 48px;
+    width: 48px;
+    height: 48px;
+    margin: 0;
+  }
+
+  .notifyWrap .iconbtn {
+    width: 48px;
+    height: 48px;
+  }
+
+  /* Cart */
+  .actions .cart {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex: 1 1 auto;
+    height: 48px;
+    min-width: 0;
+    margin: 0;
+    padding: 0 18px !important;
+    box-sizing: border-box;
+    white-space: nowrap;
+  }
+
+  /* Prevent icons/buttons from being pushed down */
+  .actions > *,
+  .actions button,
+  .actions a {
+    align-self: center;
+  }
+}
