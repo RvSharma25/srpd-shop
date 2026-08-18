@@ -51,7 +51,254 @@ export default function Home(){
 
 function NotificationPanel({notifications,onRead,onAllRead,permission,enable}:{notifications:Notification[];onRead:(id:string)=>void;onAllRead:()=>void;permission:string;enable:()=>void}){return <div className="notificationPanel"><div className="nphead"><div><b>Notifications</b><small>{notifications.filter(n=>!n.read_at).length?`${notifications.filter(n=>!n.read_at).length} unread`:'All caught up'}</small></div>{notifications.some(n=>!n.read_at)&&<button onClick={onAllRead}>Mark all read</button>}</div>{permission!=='granted'&&<button className="enableNotif" onClick={enable}><Bell size={16}/> Enable browser notifications</button>}{notifications.length===0?<div className="npempty"><Bell size={24}/><p>No notifications yet.</p></div>:<div className="nplist">{notifications.map(n=><button key={n.id} className={'nitem '+(!n.read_at?'unread':'')} onClick={()=>onRead(n.id)}><span className="nicon"><Bell size={16}/></span><span><b>{n.title}</b><small>{n.message}</small><em>{new Date(n.created_at).toLocaleString()}</em></span></button>)}</div>}</div>}
 
-function LoginModal({close}:{close:()=>void}){const [email,setEmail]=useState(''),[password,setPassword]=useState(''),[signup,setSignup]=useState(false),[name,setName]=useState(''),[phone,setPhone]=useState(''),[msg,setMsg]=useState('');const submit=async()=>{if(signup&&!name.trim()){setMsg('Please enter your name.');return}const r=signup?await supabase.auth.signUp({email,password,options:{data:{full_name:name.trim(),phone:phone.trim()}}}):await supabase.auth.signInWithPassword({email,password});if(r.error)setMsg(r.error.message);else{setMsg(signup?'Check your email to confirm your account.':'Logged in.');if(!signup)setTimeout(close,500)}};return <div className="overlay"><div className="modal"><button className="close" onClick={close}><X/></button><div className="modalicon"><LogIn/></div><h2>{signup?'Create account':'Welcome back'}</h2><p>{signup?'Create your customer account to order.':'Login as customer or owner.'}</p>{signup&&<><div className="fieldIcon"><UserRound size={16}/><input placeholder="Full name" value={name} onChange={e=>setName(e.target.value)}/></div><div className="fieldIcon"><Phone size={16}/><input placeholder="Phone number" value={phone} onChange={e=>setPhone(e.target.value)}/></div></>}<div className="fieldIcon"><Mail size={16}/><input type="email" placeholder="Email" value={email} onChange={e=>setEmail(e.target.value)}/></div><input type="password" placeholder="Password" value={password} onChange={e=>setPassword(e.target.value)}/><button className="primary" onClick={submit}>{signup?'Create account':'Login'}</button><button className="link" onClick={()=>setSignup(!signup)}>{signup?'Already have an account? Login':'New customer? Create account'}</button>{msg&&<small>{msg}</small>}</div></div>}
+function LoginModal({close}:{close:()=>void}){
+  const [email,setEmail]=useState('');
+  const [password,setPassword]=useState('');
+  const [confirmPassword,setConfirmPassword]=useState('');
+  const [signup,setSignup]=useState(false);
+  const [name,setName]=useState('');
+  const [phone,setPhone]=useState('');
+  const [msg,setMsg]=useState('');
+
+  const submit=async()=>{
+
+    setMsg('');
+
+    // =========================
+    // SIGN UP VALIDATION
+    // =========================
+    if(signup){
+
+      if(!name.trim()){
+        setMsg('Full name is required.');
+        return;
+      }
+
+      if(name.trim().length < 2){
+        setMsg('Please enter a valid full name.');
+        return;
+      }
+
+      if(!phone.trim()){
+        setMsg('Phone number is required.');
+        return;
+      }
+
+      const cleanPhone=phone.replace(/\D/g,'');
+
+      if(!/^[6-9]\d{9}$/.test(cleanPhone)){
+        setMsg('Please enter a valid 10-digit Indian mobile number.');
+        return;
+      }
+
+      if(!email.trim()){
+        setMsg('Email address is required.');
+        return;
+      }
+
+      if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim())){
+        setMsg('Please enter a valid email address.');
+        return;
+      }
+
+      if(!password){
+        setMsg('Password is required.');
+        return;
+      }
+
+      if(password.length < 6){
+        setMsg('Password must contain at least 6 characters.');
+        return;
+      }
+
+      if(!confirmPassword){
+        setMsg('Please confirm your password.');
+        return;
+      }
+
+      if(password !== confirmPassword){
+        setMsg('Passwords do not match.');
+        return;
+      }
+
+      // =========================
+      // CREATE ACCOUNT
+      // =========================
+
+      const r=await supabase.auth.signUp({
+        email:email.trim(),
+        password,
+        options:{
+          data:{
+            full_name:name.trim(),
+            phone:cleanPhone
+          }
+        }
+      });
+
+      if(r.error){
+        setMsg(r.error.message);
+        return;
+      }
+
+      setMsg('Account created. Please check your email to confirm your account.');
+
+      setPassword('');
+      setConfirmPassword('');
+
+      return;
+    }
+
+    // =========================
+    // LOGIN VALIDATION
+    // =========================
+
+    if(!email.trim()){
+      setMsg('Email address is required.');
+      return;
+    }
+
+    if(!password){
+      setMsg('Password is required.');
+      return;
+    }
+
+    // =========================
+    // LOGIN
+    // =========================
+
+    const r=await supabase.auth.signInWithPassword({
+      email:email.trim(),
+      password
+    });
+
+    if(r.error){
+      setMsg(r.error.message);
+      return;
+    }
+
+    setMsg('Logged in.');
+
+    setTimeout(()=>{
+      close();
+    },500);
+  };
+
+  return (
+    <div className="overlay">
+      <div className="modal">
+
+        <button className="close" onClick={close}>
+          <X/>
+        </button>
+
+        <div className="modalicon">
+          <LogIn/>
+        </div>
+
+        <h2>
+          {signup?'Create account':'Welcome back'}
+        </h2>
+
+        <p>
+          {signup
+            ?'Create your SRPD Shop customer account.'
+            :'Login as customer or owner.'}
+        </p>
+
+        {signup && (
+          <>
+            <div className="fieldIcon">
+              <UserRound size={16}/>
+              <input
+                required
+                placeholder="Full name *"
+                value={name}
+                onChange={e=>setName(e.target.value)}
+              />
+            </div>
+
+            <div className="fieldIcon">
+              <Phone size={16}/>
+              <input
+                required
+                type="tel"
+                inputMode="numeric"
+                maxLength={10}
+                placeholder="Phone number *"
+                value={phone}
+                onChange={e=>{
+                  const value=e.target.value
+                    .replace(/\D/g,'')
+                    .slice(0,10);
+
+                  setPhone(value);
+                }}
+              />
+            </div>
+          </>
+        )}
+
+        <div className="fieldIcon">
+          <Mail size={16}/>
+          <input
+            required
+            type="email"
+            placeholder="Email *"
+            value={email}
+            onChange={e=>setEmail(e.target.value)}
+          />
+        </div>
+
+        <input
+          required
+          type="password"
+          placeholder="Password *"
+          value={password}
+          onChange={e=>setPassword(e.target.value)}
+        />
+
+        {signup && (
+          <input
+            required
+            type="password"
+            placeholder="Confirm password *"
+            value={confirmPassword}
+            onChange={e=>setConfirmPassword(e.target.value)}
+          />
+        )}
+
+        <button
+          className="primary"
+          onClick={submit}
+        >
+          {signup?'Create account':'Login'}
+        </button>
+
+        <button
+          className="link"
+          onClick={()=>{
+            setSignup(!signup);
+            setMsg('');
+            setPassword('');
+            setConfirmPassword('');
+          }}
+        >
+          {signup
+            ?'Already have an account? Login'
+            :'New customer? Create account'}
+        </button>
+
+        {msg && (
+          <small className="formMessage">
+            {msg}
+          </small>
+        )}
+
+      </div>
+    </div>
+  );
+}
 
 
 function DeliveryDetails({value,setValue,cancel,next}:{value:{name:string;phone:string;address:string;zone:string};setValue:(v:{name:string;phone:string;address:string;zone:string})=>void;cancel:()=>void;next:()=>void}){const min=value.zone==='Nearby villages'?300:100;const charge=value.zone==='Nearby villages'?50:0;return <div className="overlay"><div className="modal deliveryModal"><button className="close" onClick={cancel}><X/></button><div className="modalicon"><MapPin/></div><p className="eyebrow">DELIVERY DETAILS</p><h2>Where should we deliver?</h2><p>Enter your details and choose your delivery area.</p><div className="fieldIcon"><UserRound size={16}/><input required placeholder="Full name *" value={value.name} onChange={e=>setValue({...value,name:e.target.value})}/></div><div className="fieldIcon"><Phone size={16}/><input required placeholder="Phone number *" value={value.phone} onChange={e=>setValue({...value,phone:e.target.value})}/></div><div className="fieldIcon"><MapPin size={16}/><select value={value.zone} onChange={e=>setValue({...value,zone:e.target.value})}><option>Bamial</option><option>Anial</option><option>Nearby villages</option></select></div><div className="fieldIcon"><MapPin size={16}/><textarea required placeholder="Full delivery address *" value={value.address} onChange={e=>setValue({...value,address:e.target.value})}/></div><div className="deliveryRule"><b>{value.zone}: {charge===0?'FREE delivery':'₹50 delivery charge'}</b><span>Minimum order: ₹{min}</span></div><button className="primary" onClick={()=>value.name.trim()&&value.phone.trim()&&value.address.trim()?next():alert('Please enter name, phone number and address.')}>Continue to confirmation</button></div></div>}
