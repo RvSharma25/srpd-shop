@@ -16,14 +16,73 @@
 .photoCount{position:absolute;right:10px;top:10px;background:#222;color:#fff;padding:5px 8px;border-radius:7px;font-size:10px;font-weight:800}.oos{top:auto;bottom:10px}
 .deliveryRule{display:flex;justify-content:space-between;gap:10px;background:#fff8dc;border:1px solid #ead27b;border-radius:10px;padding:10px 12px;margin-top:8px;font-size:11px;color:#6f5b18}.deliveryRule span{color:#777}.deliveryWarning{background:#fff0ee;border:1px solid #e3b7ae;color:#9a4438;border-radius:10px;padding:10px 12px;font-size:12px;font-weight:700;margin:10px 0}.confirmActions .primary:disabled{opacity:.45;cursor:not-allowed}.siteFooter a{display:flex;align-items:center;gap:6px;color:#fff0a8;text-decoration:none;font-size:12px;line-height:1.5}.siteFooter a:hover{text-decoration:underline}.siteFooter span{display:flex;align-items:flex-start;gap:6px}
 @media(max-width:640px){.deliveryRule{flex-direction:column}.siteFooter{grid-template-columns:1fr}.siteFooter small{grid-column:1}}
+/* ===== MOBILE HEADER FIX ===== */
+
 @media (max-width: 750px) {
-  .adminBtn,
-  .ownerBtn,
-  .ownerPanelBtn,
-  button[data-owner],
-  a[data-owner] {
-    display: flex !important;
+
+  html,
+  body {
+    width: 100%;
+    max-width: 100%;
+    overflow-x: hidden;
+  }
+
+  header {
+    width: 100%;
+    padding: 10px 4%;
+    gap: 8px;
+    overflow: visible;
+  }
+
+  .actions {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    min-width: 0;
+  }
+
+  /* OWNER / ACCOUNT BUTTON */
+  .actions .iconbtn[title="Account"] {
+    display: grid !important;
+    flex: 0 0 42px;
+    width: 42px;
+    height: 42px;
     visibility: visible !important;
     opacity: 1 !important;
+  }
+
+  /* Notification button */
+  .notifyWrap {
+    flex: 0 0 42px;
+  }
+
+  .notifyWrap .iconbtn {
+    width: 42px;
+    height: 42px;
+  }
+
+  /* Cart takes remaining space */
+  .actions .cart {
+    flex: 1 1 auto;
+    min-width: 0;
+    justify-content: center;
+    padding: 10px 12px !important;
+    white-space: nowrap;
+  }
+
+  /* Customer My Orders button */
+  .headerOrders {
+    flex: 1 1 auto;
+    min-width: 0;
+    justify-content: center;
+    white-space: nowrap;
+  }
+
+  /* Login button */
+  .headerLogin {
+    flex: 1 1 auto;
+    justify-content: center;
+    white-space: nowrap;
   }
 }
