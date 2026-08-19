@@ -227,3 +227,77 @@
     overflow-y: auto !important;
   }
 }                        
+
+/* ===== SRPD 2.4 COMPLETE MOBILE/UI FIXES ===== */
+html, body { max-width: 100%; overflow-x: hidden; }
+
+@media (max-width: 750px) {
+  .overlay {
+    padding: 12px !important;
+    overflow: hidden;
+  }
+
+  .notificationPanel {
+    position: fixed !important;
+    top: 68px !important;
+    right: 12px !important;
+    left: auto !important;
+    width: min(360px, calc(100vw - 24px)) !important;
+    max-width: calc(100vw - 24px) !important;
+    max-height: 70vh !important;
+    overflow-y: auto !important;
+    box-sizing: border-box !important;
+  }
+
+  .admin {
+    width: calc(100vw - 32px) !important;
+    max-width: calc(100vw - 32px) !important;
+    max-height: 92vh !important;
+    margin: 0 auto !important;
+    padding: 16px !important;
+    box-sizing: border-box !important;
+  }
+
+  .cartModal,
+  .confirmModal,
+  .detailModal {
+    width: calc(100vw - 24px) !important;
+    max-width: calc(100vw - 24px) !important;
+    max-height: 92vh !important;
+    box-sizing: border-box !important;
+  }
+
+  .mobileCartBar {
+    position: fixed;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    left: 12px;
+    right: 12px;
+    bottom: 12px;
+    z-index: 15;
+    background: #222;
+    color: #fff;
+    border-radius: 15px;
+    padding: 13px 15px;
+    box-shadow: 0 8px 30px #0004;
+    font-weight: 700;
+  }
+
+  .mobileCartBar span {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    white-space: nowrap;
+  }
+
+  .mobileCartBar strong {
+    color: var(--yellow);
+    white-space: nowrap;
+  }
+}
+
+@media (min-width: 751px) {
+  .mobileCartBar { display: none !important; }
+}

@@ -1,4 +1,5 @@
 import './globals.css';
+import './product-card-fix.css';
 import { ReactNode } from 'react';
 import type { Metadata, Viewport } from 'next';
 
